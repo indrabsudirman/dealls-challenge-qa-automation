@@ -169,8 +169,6 @@ export class RegisterPage {
     await expect(this.nextButton).toBeVisible({ timeout: 10_000 })
     await expect(this.nextButton).toBeEnabled({ timeout: 10_000 })
 
-    // Optional debug
-    await this.page.screenshot({ path: 'before-click.png', fullPage: true })
     await this.nextButton.click({ force: true })
   }
 
