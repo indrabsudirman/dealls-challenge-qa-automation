@@ -1,0 +1,89 @@
+name: Dealls Challenge QA Automation with Playwright
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Input tag to run (example: @smoke, @regression, @critical)'
+        required: false
+        default: '@regression'
+
+jobs:
+  test:
+    name: Run Playwright Tests
+    runs-on: self-hosted
+
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '23.7.0'
+
+      - name: Install dependencies (ignore peer deps conflict)
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run Playwright tests with Allure (based on input tag)
+        run: npx playwright test --grep "${{ github.event.inputs.tag }}" --reporter=line,allure-playwright
+
+      - name: Install Allure CLI
+        if: always()
+        run: npm install -g allure-commandline --save-dev
+
+      - name: Generate Allure report
+        if: always()
+        run: npm run allure:generate
+
+      - name: Upload Allure report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: ./allure-report
+
+      - name: Upload Playwright videos and traces
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-artifacts
+          path: |
+            test-results/**/*.webm
+            test-results/**/*.zip
+
+      - name: Deploy Allure report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          publish_branch: gh-pages
+          commit_message: 'Deploy Allure report'
+
+      - name: Zip Allure Report if exists
+        if: always()
+        run: |
+          if [ -d "allure-report" ]; then
+            zip -r allure-report.zip allure-report
+          else
+            echo "📁 'allure-report' folder not found, skipping zip."
+          fi
+
+      - name: Upload zipped report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report-zip
+          path: allure-report.zip
