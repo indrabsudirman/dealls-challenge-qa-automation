@@ -45,9 +45,7 @@ export async function selectFromDropdownWithArrowDown(
 export async function selectFromDropdownByText(page: Page, dropdownInput: Locator, optionText: string) {
   await dropdownInput.click()
 
-  // Kadang perlu delay biar options muncul stabil
   await page.waitForTimeout(300)
 
-  // Klik option sesuai text
   await page.getByText(optionText, { exact: true }).click()
 }
