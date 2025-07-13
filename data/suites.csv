@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","24808","Register new Job-Seeker / Mentee","Desktop Chrome","Sun Jul 13 08:28:48 WIB 2025","passed","Sun Jul 13 08:29:12 WIB 2025","Register Page","register.spec.ts","",""
+"","12943","should login successfully and redirect to mentoring","Desktop Chrome","Sun Jul 13 08:28:48 WIB 2025","passed","Sun Jul 13 08:29:00 WIB 2025","Login Page","login.spec.ts","",""
+"","10797","should open Dealls mentoring page and check title","Desktop Chrome","Sun Jul 13 08:28:48 WIB 2025","passed","Sun Jul 13 08:28:58 WIB 2025","Dealls Mentoring Page","home.spec.ts","",""
